@@ -1,6 +1,7 @@
 <template>
     <div>
-        <el-form :inline="true" :model="formInline" class="demo-form-inline">
+
+        <el-form :inline="true" class="demo-form-inline">
             <el-form-item>
                 <el-button type="primary" icon="el-icon-edit" circle @click="handleAdd"></el-button>
             </el-form-item>
@@ -10,38 +11,31 @@
                 v-loading="loading"
                 :data="pageInfo.list"
                 border
-                style="width: 100%">
-            <el-table-column type="expand">
-                <template slot-scope="props">
-                    <!--调用OrderItem组件显示订单明细，传递参数订单id-->
-                    <ActivityCoupon :id="props.row.id"/>
-                    <el-button type="text" size="small" @click="handleAddCoupon(props.row.id)">添加</el-button>
-                </template>
+                style="width: 100%;margin-bottom: 20px">
+            <el-table-column
+                    prop="id"
+                    label="优惠券id"
+                    width="100">
             </el-table-column>
             <el-table-column
-                    prop="name"
-                    label="活动名称"
+                    prop="description"
+                    label="优惠券描述"
                     width="220">
             </el-table-column>
             <el-table-column
-                    label="开始时间"
-                    width="160">
-                <template slot-scope="scope">
-                    {{scope.row.startTime | convertDate}}
-                </template>
+                    prop="targetAmount"
+                    label="目标价格"
+                    width="100">
             </el-table-column>
             <el-table-column
-                    label="结束时间"
-                    width="160">
-                <template slot-scope="scope">
-                    {{scope.row.endStart | convertDate}}
-                </template>
+                    prop="discountAmount"
+                    label="优惠价格"
+                    width="150">
             </el-table-column>
 
             <el-table-column
                     label="操作">
                 <template slot-scope="scope">
-                    <el-button type="text" size="small" @click="handleUpdate(scope.row.id)">修改</el-button>
                     <el-button type="text" size="small" @click="handleDel(scope.row.id)">删除</el-button>
                 </template>
             </el-table-column>
@@ -56,7 +50,6 @@
                 :total="pageInfo.total"
                 @current-change="handleCurrentChange">
         </el-pagination>
-
     </div>
 </template>
 
@@ -64,48 +57,31 @@
     import {mapGetters} from 'vuex'
     import {HOST} from '../../common/js/config'
     import axios from 'axios'
-    import ActivityCoupon from '../activity/ActivityCoupon'
-    import {makeSimpleDate} from '../../common/js/dateformat'
     export default {
-        components:{
-            ActivityCoupon
-        },
         data(){
             return{
-                pageInfo:{
-                    ruleForm:{
-                        id:'',
-                        name:'',
-                        startTime:'',
-                        endStart:''
-                    }
-                },
+                pageInfo:[],
                 currPage:1,
                 formInline:{
                     name:''
-                },
-                form:{
-                    id:'',
-                    name:'',
-                    startTime:'',
-                    endStart:''
                 },
                 loading:false
             }
         },
         created(){
-            this.getData()
+            this.getData();
         },
         methods:{
             getData(){
                 this.loading=true;
-                let url=`${HOST}/activity/list/${this.currPage}`;
-                axios.post(url,this.currPage).then((res)=>{
+                let url=`${HOST}/coupon/list/${this.currPage}`;
+                axios.post(url,this.customer).then((res)=>{
                     this.pageInfo = res.data;
-                    //const T = moment().date(this.pageInfo.ruleForm.startTime).format('YYYY-MM-DD HH:mm:ss');
-                    //console.log(T);
                     this.loading=false;
                 })
+            },
+            handleAdd(){
+                this.$router.push("/adminCouponAdd")
             },
             handleCurrentChange(val) {
                 //把跳转的页面赋给currPage
@@ -113,14 +89,8 @@
                 //重新加载数据
                 this.getData()
             },
-            handleAdd(){
-                this.$router.push("/activityAdd")
-            },
-            handleAddCoupon(id){
-                this.$router.push(`/activityCouponAdd/${id}`)
-            },
-            handleUpdate(id){
-                this.$router.push(`/activityUpdate/${id}`)
+            handleUpdate(){
+                this.$router.push("/adminCombinationUpdate")
             },
             handleDel(id){
                 this.$confirm('确定删除？','提示',{
@@ -128,13 +98,12 @@
                     cancelButtonText:'取消',
                     type:'warning'
                 }).then(()=>{
-                    let url = `${HOST}/activity/del/${id}`;
+                    let url = `${HOST}/coupon/del/${id}`;
                     axios.get(url).then(()=>{
                         this.$message({
                             message: '删除成功',
                             type: 'success'
                         });
-                        console.log("success karry");
                         this.getData()
                     })
                 })
@@ -145,13 +114,9 @@
                 'customer'
             ])
         },
-        filters: {
-            convertDate(val){
-                return makeSimpleDate(val)
-            }
-        }
     }
 </script>
 
 <style scoped>
+
 </style>

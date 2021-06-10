@@ -3,26 +3,27 @@
     <div>
         <div class="header">
             <ul class="info">
-                <!--
-                <li @click="handleCart">
-                    <span>订单</span>
-                </li>
-                -->
                 <li>
                     <span v-if="customer.username">
+
+                        <span @click="statistic" class="statistic">消费统计</span>
+
+                        <span @click="userCoupon" class="coupon">优惠券</span>
 
                         <span class="customer">{{customer.username}}</span>
 
                         <span @click="logOut">[退出]</span>
+
                     </span>
-                    <span v-else @click="login">登录</span><!--用户登录-->
+                    <span v-else @click="login" class="login">登录</span><!--用户登录-->
+
                 </li>
                 <li>
                     <span v-if="customer.username">
                     </span>
-                    <span v-else @click="register">注册有礼</span>
+                    <span v-else @click="register" class="register">注册有礼</span>
                 </li>
-                <li @click="handleAdmin">后台管理</li><!--管理员登录，进入后台-->
+                <li @click="handleAdmin" class="admin">后台管理</li><!--管理员登录，进入后台-->
                 <li>
                     <el-button size="medium" icon="el-icon-search"></el-button>
                 </li>
@@ -107,6 +108,12 @@
             login(){
                 this.dialogFormVisible=true
             },
+            statistic(){
+                this.$router.push('/statistic')
+            },
+            userCoupon(){
+                this.$router.push('/coupon')
+            },
             handleSelect(key){
                 switch(key){
                     case '1':
@@ -172,7 +179,7 @@
 
     .header .info li{
         float: right;
-        width: 100px;
+
         line-height: 45px;
         font-size: 14px;
         color: #777;
@@ -189,5 +196,24 @@
     .header .info .customer {
         font-weight: bold;
         color: #88a1ff;
+    }
+
+    .customer{
+        margin-left: 15px;
+    }
+    .statistic{
+        margin-left: 15px;
+    }
+    .admin{
+        margin-left: 20px;
+    }
+    .login{
+        margin-left: 20px;
+    }
+    .register{
+        margin-left: 20px;
+    }
+    .coupon{
+        margin-left: 20px;
     }
 </style>
